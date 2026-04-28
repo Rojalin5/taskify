@@ -3,8 +3,7 @@ import API from "../api";
 import { io } from "socket.io-client";
 import "./dashboard.css";
 
-const socket = io("http://localhost:5001");
-
+const socket = io("https://taskify-4x9v.onrender.com");
 export default function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
