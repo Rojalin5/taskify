@@ -1,67 +1,66 @@
 import Task from '../models/Task.js';
+import { calculatePriority } from '../utils/priority.js';
 
-// ✅ Create Task
 export const createTask = async (req, res) => {
   try {
-    const { title, description, category, deadline } = req.body;
-
-    if (!title) {
-      return res.status(400).json({ msg: "Title is required" });
-    }
-
     const task = await Task.create({
-      title,
-      description,
-      category,
-      deadline,
-      user: req.user.id
+      ...req.body,
+      user: req.user.id,
+      priorityScore: calculatePriority(req.body)
     });
 
     res.status(201).json(task);
-
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
 };
 
-
-
-// ✅ Get All Tasks (only logged-in user)
 export const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({ user: req.user.id }).sort({ createdAt: -1 });
-    res.json(tasks);
+    const tasks = await Task.find({ user: req.user.id });
 
+    const updatedTasks = tasks.map((task) => {
+      const obj = task.toObject();
+      obj.priorityScore = calculatePriority(task);
+      return obj;
+    });
+
+    updatedTasks.sort((a, b) => {
+      if (b.priorityScore === a.priorityScore) {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      }
+      return b.priorityScore - a.priorityScore;
+    });
+
+    res.json(updatedTasks);
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
 };
 
-
-
-// ✅ Update Task (only owner can update)
 export const updateTask = async (req, res) => {
   try {
-    const task = await Task.findOneAndUpdate(
-      { _id: req.params.id, user: req.user.id },
-      req.body,
-      { new: true }
-    );
+    let task = await Task.findOne({
+      _id: req.params.id,
+      user: req.user.id
+    });
 
     if (!task) {
-      return res.status(404).json({ msg: "Task not found or unauthorized" });
+      return res.status(404).json({ msg: "Task not found" });
     }
 
-    res.json(task);
+    Object.assign(task, req.body);
 
+    task.priorityScore = calculatePriority(task);
+
+    await task.save();
+
+    res.json(task);
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
 };
 
-
-
-// ✅ Delete Task (only owner can delete)
 export const deleteTask = async (req, res) => {
   try {
     const task = await Task.findOneAndDelete({
@@ -70,11 +69,10 @@ export const deleteTask = async (req, res) => {
     });
 
     if (!task) {
-      return res.status(404).json({ msg: "Task not found or unauthorized" });
+      return res.status(404).json({ msg: "Task not found" });
     }
 
-    res.json({ msg: "Task deleted successfully" });
-
+    res.json({ msg: "Task deleted" });
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
