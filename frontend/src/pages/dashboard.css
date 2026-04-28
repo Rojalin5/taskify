@@ -1,0 +1,109 @@
+.container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.card {
+  padding: 10px 15px;
+  border-radius: 8px;
+  background: #eee;
+  font-weight: bold;
+}
+
+.success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* Input */
+.inputBox {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.inputBox input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.inputBox button {
+  padding: 8px 15px;
+  border: none;
+  background: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.inputBox button:hover {
+  background: #0056b3;
+}
+
+/* Tasks */
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.taskCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+}
+
+.taskCard h3 {
+  margin: 0;
+}
+
+/* Badge */
+.badge {
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.high {
+  background: #ffcccc;
+  color: #a70000;
+}
+
+.low {
+  background: #cce5ff;
+  color: #004085;
+}
+
+/* Empty */
+.empty {
+  text-align: center;
+  color: gray;
+}
+.overdue {
+  border: 2px solid red;
+  background: #ffe5e5;
+}

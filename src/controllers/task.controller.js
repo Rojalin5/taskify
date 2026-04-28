@@ -1,4 +1,5 @@
 import Task from '../models/Task.js';
+import { io } from "../../server.js";
 import { calculatePriority } from '../utils/priority.js';
 
 export const createTask = async (req, res) => {
@@ -8,6 +9,8 @@ export const createTask = async (req, res) => {
       user: req.user.id,
       priorityScore: calculatePriority(req.body)
     });
+
+    io.emit("taskCreated", task);
 
     res.status(201).json(task);
   } catch (err) {
@@ -55,6 +58,8 @@ export const updateTask = async (req, res) => {
 
     await task.save();
 
+    io.emit("taskUpdated", task);
+
     res.json(task);
   } catch (err) {
     res.status(500).json({ msg: err.message });
@@ -71,6 +76,9 @@ export const deleteTask = async (req, res) => {
     if (!task) {
       return res.status(404).json({ msg: "Task not found" });
     }
+
+    // 🔥 ADD THIS (real-time update)
+    io.emit("taskDeleted");
 
     res.json({ msg: "Task deleted" });
   } catch (err) {
