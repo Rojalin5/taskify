@@ -4,9 +4,9 @@ import generateToken from '../utils/generateToken.js';
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!name || !email || !password) {
+    if (!email || !password) {
       return res.status(400).json({ msg: "All fields required" });
     }
 
@@ -18,7 +18,6 @@ export const register = async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      name,
       email,
       password: hashed
     });
@@ -30,6 +29,7 @@ export const register = async (req, res) => {
     });
 
   } catch (err) {
+    console.error(err); // 🔥 IMPORTANT (so you see error)
     res.status(500).json({ msg: err.message });
   }
 };
